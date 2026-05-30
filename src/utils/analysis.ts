@@ -21,10 +21,31 @@ export const defaultFilters: PlantFilters = {
   flower_color_group: '',
   leaf_color_group: '',
   plant_layer: '',
+  flowering_season: '',
 };
 
 const includesValue = (source: string, keyword: string): boolean =>
   source.toLowerCase().includes(keyword.trim().toLowerCase());
+
+const floweringSeasonMonths: Record<string, MonthCode[]> = {
+  春季: ['mar', 'apr', 'may'],
+  夏季: ['jun', 'jul', 'aug'],
+  秋季: ['sep', 'oct', 'nov'],
+  冬季: ['dec', 'jan', 'feb'],
+};
+
+const hasFloweringSeason = (
+  plant: PlantWithMatrix,
+  floweringSeason: string,
+): boolean => {
+  const targetMonths = floweringSeasonMonths[floweringSeason];
+
+  if (!targetMonths) {
+    return true;
+  }
+
+  return targetMonths.some((month) => plant[`flower_${month}` as const] > 0);
+};
 
 export const getUniqueOptions = (
   plants: PlantWithMatrix[],
@@ -78,7 +99,14 @@ export const filterPlants = (
       return false;
     }
 
-    return !filters.plant_layer || getPlantLayerLabels(plant).includes(filters.plant_layer);
+    if (
+      filters.plant_layer &&
+      !getPlantLayerLabels(plant).includes(filters.plant_layer)
+    ) {
+      return false;
+    }
+
+    return !filters.flowering_season || hasFloweringSeason(plant, filters.flowering_season);
   });
 
 export const getMonthlyAnalysis = (

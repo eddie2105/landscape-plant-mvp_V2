@@ -27,6 +27,7 @@ export interface Plant {
   leaf_color_group: string;
   display_type: string;
   flower_impact: number;
+  has_seasonal_image: boolean;
 }
 
 export interface DisplayMatrix extends Record<FlowerMonthKey | LeafMonthKey, number> {
@@ -53,4 +54,5 @@ export interface PlantFilters {
   flower_color_group: string;
   leaf_color_group: string;
   plant_layer: string;
+  flowering_season: string;
 }

@@ -52,11 +52,30 @@ function SelectField({ field, label, value, options, onFilterChange }: SelectFie
 function FilterPanel({ filters, options, onFilterChange, onReset }: FilterPanelProps) {
   return (
     <Card sx={{ p: { xs: 2, md: 3 } }}>
-      <Box sx={{ mb: 2 }}>
-        <Typography variant="h5">植栽篩選</Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-          先縮小候選範圍，再從下方卡片挑選植栽。
-        </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: { xs: 'flex-start', sm: 'center' },
+          justifyContent: 'space-between',
+          gap: 2,
+          mb: 2,
+        }}
+      >
+        <Box>
+          <Typography variant="h5">植栽篩選</Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+            先縮小候選範圍，再從下方卡片挑選植栽。
+          </Typography>
+        </Box>
+        <Button
+          type="button"
+          variant="outlined"
+          color="primary"
+          onClick={onReset}
+          sx={{ flexShrink: 0, minHeight: 40 }}
+        >
+          重設篩選
+        </Button>
       </Box>
 
       <Box
@@ -127,15 +146,14 @@ function FilterPanel({ filters, options, onFilterChange, onReset }: FilterPanelP
           onFilterChange={onFilterChange}
         />
 
-        <Button
-          type="button"
-          variant="outlined"
-          color="primary"
-          onClick={onReset}
-          sx={{ minHeight: 40, justifySelf: { md: 'start' } }}
-        >
-          重設篩選
-        </Button>
+        <SelectField
+          field="flowering_season"
+          label="花期季節"
+          value={filters.flowering_season}
+          options={options.flowering_season}
+          onFilterChange={onFilterChange}
+        />
+
       </Box>
     </Card>
   );

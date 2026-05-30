@@ -93,6 +93,7 @@ function App() {
       flower_color_group: getUniqueOptions(plants, 'flower_color_group'),
       leaf_color_group: getUniqueOptions(plants, 'leaf_color_group'),
       plant_layer: ['高層植栽', '中層植栽', '低層植栽'],
+      flowering_season: ['春季', '夏季', '秋季', '冬季'],
     }),
     [plants],
   );

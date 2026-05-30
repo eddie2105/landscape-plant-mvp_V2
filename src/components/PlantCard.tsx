@@ -1,8 +1,10 @@
-﻿import { useState } from 'react';
+import { useEffect, useState, type KeyboardEvent, type MouseEvent } from 'react';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RadioButtonUncheckedIcon from '@mui/icons-material/RadioButtonUnchecked';
 import { alpha } from '@mui/material/styles';
-import { Box, Card, Chip, Stack, Typography } from '@mui/material';
+import { Box, Card, Chip, IconButton, Stack, Typography } from '@mui/material';
 import type { PlantWithMatrix } from '../types/plant';
 import { getPlantLayerLabels } from '../utils/seasonalSummary';
 
@@ -13,6 +15,8 @@ interface PlantCardProps {
 }
 
 const imageForPlant = (plantId: string): string => `/images/plants/${plantId}.jpg`;
+const seasonalImageForPlant = (plantId: string): string =>
+  `/images/plants/${plantId}_seasonal.jpg`;
 const placeholderImage = '/images/plants/placeholder.jpg';
 
 const getFlowerImpactLabel = (impact: number): string => {
@@ -39,25 +43,58 @@ const formatDisplayType = (value: string): string =>
     .join('・');
 
 function PlantCard({ plant, selected, onToggle }: PlantCardProps) {
-  const [imageSrc, setImageSrc] = useState(imageForPlant(plant.plant_id));
+  const imageOptions = [
+    { label: '主圖', src: imageForPlant(plant.plant_id) },
+    ...(plant.has_seasonal_image
+      ? [{ label: '季節變換', src: seasonalImageForPlant(plant.plant_id) }]
+      : []),
+  ];
+  const [imageIndex, setImageIndex] = useState(0);
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
+  const currentImage = imageOptions[imageIndex] ?? imageOptions[0];
+  const imageSrc = failedImages.has(currentImage.src) ? placeholderImage : currentImage.src;
   const isPlaceholder = imageSrc === placeholderImage;
+  const hasImageCarousel = imageOptions.length > 1;
   const layerLabel = getPlantLayerLabels(plant).join(' / ');
   const flowerImpactLabel = getFlowerImpactLabel(plant.flower_impact);
   const flowerColorGroup = formatListText(plant.flower_color_group || '未分類');
   const leafColorGroup = formatListText(plant.leaf_color_group || '未分類');
   const displayType = formatDisplayType(plant.display_type);
 
+  useEffect(() => {
+    setImageIndex(0);
+    setFailedImages(new Set());
+  }, [plant.plant_id]);
+
   const handleImageError = () => {
-    if (!isPlaceholder) {
-      setImageSrc(placeholderImage);
+    setFailedImages((previous) => new Set(previous).add(currentImage.src));
+  };
+
+  const handlePreviousImage = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setImageIndex((current) =>
+      current === 0 ? imageOptions.length - 1 : current - 1,
+    );
+  };
+
+  const handleNextImage = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setImageIndex((current) => (current + 1) % imageOptions.length);
+  };
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      onToggle(plant.plant_id);
     }
   };
 
   return (
     <Card
-      component="button"
-      type="button"
+      role="button"
+      tabIndex={0}
       onClick={() => onToggle(plant.plant_id)}
+      onKeyDown={handleKeyDown}
       sx={(theme) => ({
         width: '100%',
         height: '100%',
@@ -102,6 +139,43 @@ function PlantCard({ plant, selected, onToggle }: PlantCardProps) {
           }}
         />
 
+        {hasImageCarousel && (
+          <>
+            <IconButton
+              size="small"
+              aria-label={`上一張 ${plant.chinese_name} 圖片`}
+              onClick={handlePreviousImage}
+              sx={{
+                position: 'absolute',
+                left: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                bgcolor: 'rgba(250, 248, 242, 0.84)',
+                color: 'primary.dark',
+                '&:hover': { bgcolor: 'rgba(250, 248, 242, 0.96)' },
+              }}
+            >
+              <ChevronLeftIcon fontSize="small" />
+            </IconButton>
+            <IconButton
+              size="small"
+              aria-label={`下一張 ${plant.chinese_name} 圖片`}
+              onClick={handleNextImage}
+              sx={{
+                position: 'absolute',
+                right: 10,
+                top: '50%',
+                transform: 'translateY(-50%)',
+                bgcolor: 'rgba(250, 248, 242, 0.84)',
+                color: 'primary.dark',
+                '&:hover': { bgcolor: 'rgba(250, 248, 242, 0.96)' },
+              }}
+            >
+              <ChevronRightIcon fontSize="small" />
+            </IconButton>
+          </>
+        )}
+
         <Chip
           icon={selected ? <CheckCircleIcon /> : <RadioButtonUncheckedIcon />}
           label={selected ? '已加入' : '＋ 加入組合'}
@@ -116,6 +190,25 @@ function PlantCard({ plant, selected, onToggle }: PlantCardProps) {
             fontWeight: 700,
           }}
         />
+
+        {hasImageCarousel && (
+          <Typography
+            variant="caption"
+            sx={{
+              position: 'absolute',
+              left: 12,
+              bottom: 10,
+              px: 1,
+              py: 0.35,
+              borderRadius: 1,
+              color: 'primary.dark',
+              bgcolor: 'rgba(250, 248, 242, 0.84)',
+              fontWeight: 800,
+            }}
+          >
+            {currentImage.label}
+          </Typography>
+        )}
 
         {isPlaceholder && (
           <Typography

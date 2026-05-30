@@ -72,6 +72,11 @@ const sanitizeFlowerImpact = (value: string | undefined): number => {
   return Math.max(0, Math.min(3, parsed));
 };
 
+const sanitizeBoolean = (value: string | undefined): boolean => {
+  const cleaned = value?.trim().toLowerCase() ?? '';
+  return cleaned === '1' || cleaned === 'true' || cleaned === 'yes';
+};
+
 export const loadPlantData = async (): Promise<PlantWithMatrix[]> => {
   const [plantsRaw, matrixRaw] = await Promise.all([
     parseCsv<Record<string, string>>('/data/plants.csv'),
@@ -90,6 +95,7 @@ export const loadPlantData = async (): Promise<PlantWithMatrix[]> => {
     leaf_color_group: sanitizeText(row.leaf_color_group),
     display_type: sanitizeText(row.display_type),
     flower_impact: sanitizeFlowerImpact(row.flower_impact),
+    has_seasonal_image: sanitizeBoolean(row.has_seasonal_image),
   }));
 
   const matrixMap = new Map<string, DisplayMatrix>();
