@@ -12,6 +12,8 @@ const flowerKeys = months.map(
   ({ code }) => `flower_${code}` as FlowerMonthKey,
 );
 const leafKeys = months.map(({ code }) => `leaf_${code}` as LeafMonthKey);
+const assetPath = (path: string): string =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
 
 const parseCsv = async <T extends Record<string, string>>(
   path: string,
@@ -79,8 +81,8 @@ const sanitizeBoolean = (value: string | undefined): boolean => {
 
 export const loadPlantData = async (): Promise<PlantWithMatrix[]> => {
   const [plantsRaw, matrixRaw] = await Promise.all([
-    parseCsv<Record<string, string>>('/data/plants.csv'),
-    parseCsv<Record<string, string>>('/data/display_matrix.csv'),
+    parseCsv<Record<string, string>>(assetPath('data/plants.csv')),
+    parseCsv<Record<string, string>>(assetPath('data/display_matrix.csv')),
   ]);
 
   const plants: Plant[] = plantsRaw.map((row) => ({

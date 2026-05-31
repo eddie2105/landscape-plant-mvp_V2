@@ -14,10 +14,14 @@ interface PlantCardProps {
   onToggle: (plantId: string) => void;
 }
 
-const imageForPlant = (plantId: string): string => `/images/plants/${plantId}.jpg`;
+const assetPath = (path: string): string =>
+  `${import.meta.env.BASE_URL}${path.replace(/^\//, '')}`;
+
+const imageForPlant = (plantId: string): string =>
+  assetPath(`images/plants/${plantId}.jpg`);
 const seasonalImageForPlant = (plantId: string): string =>
-  `/images/plants/${plantId}_seasonal.jpg`;
-const placeholderImage = '/images/plants/placeholder.jpg';
+  assetPath(`images/plants/${plantId}_seasonal.jpg`);
+const placeholderImage = assetPath('images/plants/placeholder.jpg');
 
 const getFlowerImpactLabel = (impact: number): string => {
   if (impact >= 3) return '強';
