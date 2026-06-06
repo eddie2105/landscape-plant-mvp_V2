@@ -44,8 +44,19 @@ const getStateColor = (point: number, type: 'flower' | 'leaf'): string => {
   return '#D8D1C4';
 };
 
-function MonthCell({ item, type }: { item: AnnualSeasonalPoint; type: 'flower' | 'leaf' }) {
+function MonthCell({
+  item,
+  type,
+  active = true,
+}: {
+  item: AnnualSeasonalPoint;
+  type: 'flower' | 'leaf';
+  active?: boolean;
+}) {
   const point = type === 'flower' ? item.flowerPoint : item.leafPoint;
+  const label = active ? getStateLabel(point) : '非目標';
+  const backgroundColor = active ? getStateColor(point, type) : '#E9E4D8';
+  const textColor = active && point >= 1 ? '#FAF8F2' : 'text.secondary';
 
   return (
     <Box
@@ -54,8 +65,8 @@ function MonthCell({ item, type }: { item: AnnualSeasonalPoint; type: 'flower' |
         borderRadius: 2,
         p: 1,
         textAlign: 'center',
-        bgcolor: getStateColor(point, type),
-        color: point >= 1 ? '#FAF8F2' : 'text.secondary',
+        bgcolor: backgroundColor,
+        color: textColor,
         fontWeight: 800,
       }}
     >
@@ -63,7 +74,7 @@ function MonthCell({ item, type }: { item: AnnualSeasonalPoint; type: 'flower' |
         {item.monthLabel}
       </Typography>
       <Typography variant="body2" fontWeight={900}>
-        {getStateLabel(point)}
+        {label}
       </Typography>
     </Box>
   );
@@ -73,10 +84,12 @@ function MonthStateRow({
   label,
   items,
   type,
+  isItemActive,
 }: {
   label: string;
   items: AnnualSeasonalPoint[];
   type: 'flower' | 'leaf';
+  isItemActive?: (item: AnnualSeasonalPoint) => boolean;
 }) {
   return (
     <Box
@@ -102,7 +115,12 @@ function MonthStateRow({
         }}
       >
         {items.map((item) => (
-          <MonthCell key={`${type}-${item.month}`} item={item} type={type} />
+          <MonthCell
+            key={`${type}-${item.month}`}
+            item={item}
+            type={type}
+            active={isItemActive ? isItemActive(item) : true}
+          />
         ))}
       </Box>
     </Box>
@@ -167,15 +185,21 @@ function AnalysisCharts({ selectedPlants, analysis, summary }: AnalysisChartsPro
 
   const weakFlowerMonths = chartData.strategy.filter((item) => item.flowerPoint === 0).length;
   const supportedFlowerMonths = chartData.strategy.length - weakFlowerMonths;
+  const targetMonthSet = new Set(summary.floweringStrategy.months);
 
   return (
     <Stack spacing={2.5}>
       <ChartCard
         title="年度搭配檢查"
-        subtitle="用月份狀態格檢查季節亮點與全年綠量；建議補強的月份就是後續可討論的缺口。"
+        subtitle="季節亮點只判讀目前想看的花季，非目標月份不列為補強缺口；全年綠量仍檢查 12 個月。"
       >
         <Stack spacing={1.5}>
-          <MonthStateRow label="季節亮點" items={chartData.annual} type="flower" />
+          <MonthStateRow
+            label="季節亮點"
+            items={chartData.annual}
+            type="flower"
+            isItemActive={(item) => targetMonthSet.has(item.month)}
+          />
           <MonthStateRow label="全年綠量" items={chartData.annual} type="leaf" />
         </Stack>
       </ChartCard>
