@@ -34,6 +34,12 @@ const getLeafState = (leafCoveragePercent: number): MonthlyDetailRow['leafState'
   return '弱';
 };
 
+const getFriendlyStateLabel = (state: MonthlyDetailRow['flowerState']): string => {
+  if (state === '強') return '表現明顯';
+  if (state === '中') return '基本支撐';
+  return '建議補強';
+};
+
 const getReason = ({
   isTargetMonth,
   flowerState,
@@ -46,17 +52,21 @@ const getReason = ({
   const parts: string[] = [];
 
   if (isTargetMonth) {
-    parts.push(flowerState === '弱' ? '目標花期內缺花，需補強' : `目標花期內，開花${flowerState}`);
+    parts.push(
+      flowerState === '弱'
+        ? '想看的花季內缺少季節亮點，建議補強'
+        : `想看的花季內，季節亮點${getFriendlyStateLabel(flowerState)}`,
+    );
   } else {
-    parts.push('非目標花期');
+    parts.push('非想看的花季');
   }
 
   if (leafState === '強') {
-    parts.push('葉相穩定');
+    parts.push('全年綠量穩定');
   } else if (leafState === '中') {
-    parts.push('葉相中等');
+    parts.push('全年綠量基本支撐');
   } else {
-    parts.push('葉相偏弱');
+    parts.push('全年綠量建議補強');
   }
 
   return parts.join('；');

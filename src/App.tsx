@@ -8,6 +8,7 @@ import {
   Typography,
 } from '@mui/material';
 import Header from './components/Header';
+import AudienceNote from './components/AudienceNote';
 import FilterPanel from './components/FilterPanel';
 import PlantCardGrid from './components/PlantCardGrid';
 import PlantCombinationPanel from './components/PlantCombinationPanel';
@@ -138,6 +139,7 @@ function App() {
     >
       <Container maxWidth="xl">
         <Header totalPlants={plants.length} selectedCount={selectedPlants.length} />
+        <AudienceNote />
 
         {loading && (
           <Stack alignItems="center" justifyContent="center" spacing={2} sx={{ py: 10 }}>

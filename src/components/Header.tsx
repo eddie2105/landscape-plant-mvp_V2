@@ -54,7 +54,7 @@ function Header({ totalPlants, selectedCount }: HeaderProps) {
               <YardOutlinedIcon />
             </Avatar>
             <Chip
-              label="Landscape Seasonal Planting Analyzer"
+              label="Planting Combination Checker MVP"
               sx={{
                 bgcolor: 'rgba(255,255,255,0.12)',
                 color: 'common.white',
@@ -64,13 +64,14 @@ function Header({ totalPlants, selectedCount }: HeaderProps) {
           </Stack>
 
           <Typography variant="h3" component="h1" gutterBottom>
-            植栽季相檢查工作台
+            植栽搭配初步檢查工具
           </Typography>
           <Typography
             variant="body1"
             sx={{ color: 'rgba(255,255,255,0.8)', maxWidth: 560 }}
           >
-            用花量權重、葉相穩定與植栽層次，檢查植栽組合的一年四季表現。
+            協助使用者從季節亮點、全年綠量與空間層次三個面向，
+            初步理解一組植栽搭配是否平衡。
           </Typography>
         </Box>
 
@@ -101,7 +102,7 @@ function Header({ totalPlants, selectedCount }: HeaderProps) {
               <Typography variant="h4">{selectedCount}</Typography>
             </Box>
             <Typography variant="body2" color="text.secondary">
-              先篩選候選植物，再加入組合，即可檢查花期、葉相與複層配置。
+              先篩選候選植物，再加入組合，即可檢查季節亮點、全年綠量與空間層次。
             </Typography>
           </Stack>
         </Card>

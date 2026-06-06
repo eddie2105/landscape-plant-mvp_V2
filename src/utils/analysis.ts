@@ -137,10 +137,10 @@ export const getMonthlyAnalysis = (
 
     const issues: string[] = [];
     if (flower_count === 0) {
-      issues.push('該月份缺少開花植物');
+      issues.push('該月份缺少季節亮點植物');
     }
     if (leaf_count <= 3) {
-      issues.push('該月份葉相表現偏弱');
+      issues.push('該月份全年綠量表現偏弱');
     }
     if (heat_score <= 15) {
       issues.push('該月份整體季相偏弱');

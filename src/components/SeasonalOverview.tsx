@@ -14,7 +14,7 @@ function SeasonalOverview({ selectedPlants, summary }: SeasonalOverviewProps) {
       <Card sx={{ p: { xs: 2, md: 3 } }}>
         <Typography variant="h5">季相檢查</Typography>
         <Typography color="text.secondary" sx={{ mt: 1 }}>
-          請先加入植物，系統將分析所選植栽組合的開花期與常綠 / 葉相穩定指數。
+          請先加入植物，系統將分析所選植栽組合的季節亮點與全年綠量穩定度。
         </Typography>
       </Card>
     );

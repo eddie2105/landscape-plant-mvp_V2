@@ -1,4 +1,4 @@
-﻿import { useState } from 'react';
+import { useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteSweepIcon from '@mui/icons-material/DeleteSweep';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -8,7 +8,6 @@ import {
   Box,
   Button,
   Card,
-  Chip,
   Collapse,
   Divider,
   FormControl,
@@ -24,7 +23,6 @@ import type { PlantWithMatrix } from '../types/plant';
 import type {
   FloweringStrategy,
   FloweringStrategyId,
-  SeasonalIndex,
   SeasonalSummary,
 } from '../utils/seasonalSummary';
 
@@ -38,35 +36,34 @@ interface PlantCombinationPanelProps {
   onClear: () => void;
 }
 
-function IndexRow({
-  title,
-  index,
-  active,
-}: {
+interface ScoreRowProps {
   title: string;
-  index: SeasonalIndex;
+  score: number;
+  note: string;
   active: boolean;
-}) {
+}
+
+function ScoreRow({ title, score, note, active }: ScoreRowProps) {
   return (
     <Box
       sx={{
         display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) 84px',
-        gap: 1.5,
+        gridTemplateColumns: 'minmax(0, 1fr) 76px',
+        gap: 1.4,
         alignItems: 'center',
       }}
     >
       <Box sx={{ minWidth: 0 }}>
-        <Typography variant="body2" color="text.secondary" fontWeight={700}>
+        <Typography variant="body2" fontWeight={800}>
           {title}
         </Typography>
         <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.3 }}>
-          {active ? `${index.level}｜${index.note}` : '加入植物後開始分析'}
+          {active ? note : '加入植物後開始檢查'}
         </Typography>
       </Box>
       <Box sx={{ textAlign: 'right' }}>
         <Typography variant="h5" color="primary.dark" sx={{ lineHeight: 1.05 }}>
-          {active ? index.score : '-'}
+          {active ? score : '-'}
         </Typography>
         {active && (
           <Typography variant="caption" color="text.secondary">
@@ -88,7 +85,15 @@ function PlantCombinationPanel({
   onClear,
 }: PlantCombinationPanelProps) {
   const hasSelection = selectedPlants.length > 0;
-  const [showSelectedPlants, setShowSelectedPlants] = useState(true);
+  const [showSelectedPlants, setShowSelectedPlants] = useState(false);
+  const selectedPreview =
+    selectedPlants.length === 0
+      ? '尚未加入植物'
+      : selectedPlants
+          .slice(0, 3)
+          .map((plant) => plant.chinese_name)
+          .join('、') + (selectedPlants.length > 3 ? ` 等 ${selectedPlants.length} 種` : '');
+
   const handleStrategyChange = (event: SelectChangeEvent) => {
     onFloweringStrategyChange(event.target.value as FloweringStrategyId);
   };
@@ -107,31 +112,36 @@ function PlantCombinationPanel({
       }}
     >
       <Stack
-        spacing={2.2}
+        spacing={1.8}
         sx={{
           height: '100%',
           overflowY: 'auto',
           pr: { lg: 0.5 },
         }}
       >
-        <Box>
-          <Typography variant="h5">我的植栽組合</Typography>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
-            已選 {selectedPlants.length} 種植物
-          </Typography>
-        </Box>
-
-        <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-          <Chip label={`分析對象：${selectedPlants.length} 種`} color="primary" variant="outlined" />
+        <Stack
+          direction="row"
+          spacing={1.5}
+          alignItems="flex-start"
+          justifyContent="space-between"
+        >
+          <Box>
+            <Typography variant="h5">我的植栽組合</Typography>
+            <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+              已選 {selectedPlants.length} 種植物
+            </Typography>
+          </Box>
           <Button
             type="button"
             variant="outlined"
             color="primary"
+            size="small"
             startIcon={<DeleteSweepIcon />}
             disabled={selectedPlants.length === 0}
             onClick={onClear}
+            sx={{ flexShrink: 0 }}
           >
-            清空組合
+            清空
           </Button>
         </Stack>
 
@@ -161,12 +171,12 @@ function PlantCombinationPanel({
               textAlign: 'left',
             }}
           >
-            <Box>
-              <Typography variant="body2" fontWeight={700}>
-                已選植物清單
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="body2" fontWeight={800}>
+                已選植物
               </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {selectedPlants.length === 0 ? '尚未加入植物' : `共 ${selectedPlants.length} 種，點擊查看或收合`}
+              <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
+                {selectedPreview}
               </Typography>
             </Box>
             {showSelectedPlants ? <ExpandLessIcon /> : <ExpandMoreIcon />}
@@ -177,7 +187,7 @@ function PlantCombinationPanel({
               {selectedPlants.length === 0 ? (
                 <Box
                   sx={{
-                    minHeight: 120,
+                    minHeight: 96,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
@@ -190,18 +200,11 @@ function PlantCombinationPanel({
                   }}
                 >
                   <Typography color="text.secondary">
-                    請從候選卡片加入植物，系統會分析這組植栽的開花期與葉相穩定度。
+                    請從候選卡片加入植物。
                   </Typography>
                 </Box>
               ) : (
-                <Stack
-                  spacing={1}
-                  sx={{
-                    maxHeight: 220,
-                    overflowY: 'auto',
-                    pr: 0.5,
-                  }}
-                >
+                <Stack spacing={1} sx={{ maxHeight: 180, overflowY: 'auto', pr: 0.5 }}>
                   {selectedPlants.map((plant) => (
                     <Box
                       key={plant.plant_id}
@@ -213,12 +216,12 @@ function PlantCombinationPanel({
                         border: '1px solid',
                         borderColor: 'divider',
                         borderRadius: 2,
-                        p: 1.2,
+                        p: 1.1,
                         bgcolor: 'background.paper',
                       }}
                     >
                       <Box sx={{ minWidth: 0 }}>
-                        <Typography fontWeight={700} noWrap>
+                        <Typography fontWeight={800} noWrap>
                           {plant.chinese_name}
                         </Typography>
                         <Typography variant="caption" color="text.secondary" noWrap>
@@ -246,18 +249,80 @@ function PlantCombinationPanel({
             borderColor: 'divider',
             borderRadius: 2,
             p: 1.6,
+            bgcolor: hasSelection ? 'rgba(111, 138, 120, 0.10)' : 'rgba(111, 138, 120, 0.06)',
+          }}
+        >
+          <Stack direction="row" spacing={1} alignItems="flex-start">
+            <TipsAndUpdatesIcon color="primary" fontSize="small" />
+            <Box>
+              <Typography variant="body2" fontWeight={800}>
+                快速結論
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {hasSelection
+                  ? summary.designReminder
+                  : '加入植物後，系統會用白話整理這組搭配的季節亮點、全年綠量與空間層次。'}
+              </Typography>
+            </Box>
+          </Stack>
+        </Box>
+
+        <Box
+          sx={{
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 2,
+            p: 1.6,
+            bgcolor: hasSelection ? 'rgba(111, 138, 120, 0.08)' : 'rgba(111, 138, 120, 0.06)',
+          }}
+        >
+          <Typography variant="body2" color="text.secondary" fontWeight={800} sx={{ mb: 1.2 }}>
+            三個檢查結果
+          </Typography>
+          <Stack spacing={1.25} divider={<Divider flexItem />}>
+            <ScoreRow
+              title="季節亮點"
+              score={summary.floweringIndex.score}
+              note={`${summary.floweringIndex.level}｜${summary.floweringIndex.note}`}
+              active={hasSelection}
+            />
+            <ScoreRow
+              title="全年綠量穩定度"
+              score={summary.leafIndex.score}
+              note={`${summary.leafIndex.level}｜${summary.leafIndex.note}`}
+              active={hasSelection}
+            />
+            <ScoreRow
+              title="空間層次完整度"
+              score={summary.layerSummary.score}
+              note={
+                hasSelection
+                  ? `${summary.layerSummary.level}｜高 ${summary.layerSummary.high}、中 ${summary.layerSummary.middle}、低 ${summary.layerSummary.low}`
+                  : ''
+              }
+              active={hasSelection}
+            />
+          </Stack>
+        </Box>
+
+        <Box
+          sx={{
+            border: '1px solid',
+            borderColor: 'divider',
+            borderRadius: 2,
+            p: 1.6,
             bgcolor: 'rgba(111, 138, 120, 0.06)',
           }}
         >
-          <Typography variant="body2" color="text.secondary" fontWeight={700} sx={{ mb: 1.2 }}>
-            花期檢查目標
+          <Typography variant="body2" color="text.secondary" fontWeight={800} sx={{ mb: 1.2 }}>
+            想看的花季
           </Typography>
           <FormControl fullWidth size="small">
-            <InputLabel id="flowering-strategy-label">觀花策略</InputLabel>
+            <InputLabel id="flowering-strategy-label">想看的花季</InputLabel>
             <Select
               labelId="flowering-strategy-label"
               value={floweringStrategyId}
-              label="觀花策略"
+              label="想看的花季"
               onChange={handleStrategyChange}
             >
               {floweringStrategies.map((strategy) => (
@@ -268,67 +333,8 @@ function PlantCombinationPanel({
             </Select>
           </FormControl>
           <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 1 }}>
-            開花指數會依目前目標月份計算，不再要求全年都要有花。
+            這會影響「季節亮點」分數，不要求全年都要開花。
           </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 2,
-            p: 1.6,
-            bgcolor: hasSelection ? 'rgba(111, 138, 120, 0.08)' : 'rgba(111, 138, 120, 0.06)',
-          }}
-        >
-          <Typography variant="body2" color="text.secondary" fontWeight={700} sx={{ mb: 1.2 }}>
-            四季觀花總覽
-          </Typography>
-          <Box
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
-              gap: 1,
-            }}
-          >
-            {summary.seasonalFloweringOverview.map((season) => (
-              <Box
-                key={season.id}
-                sx={{
-                  border: '1px solid',
-                  borderColor: 'divider',
-                  borderRadius: 1.5,
-                  p: 1,
-                  bgcolor: 'background.paper',
-                }}
-              >
-                <Typography variant="caption" color="text.secondary" fontWeight={700}>
-                  {season.label}
-                </Typography>
-                <Typography variant="body2" color="primary.dark" fontWeight={800}>
-                  {hasSelection ? `${season.level}｜${season.score}` : '-'}
-                </Typography>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-
-        <Box
-          sx={{
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 2,
-            p: 1.6,
-            bgcolor: hasSelection ? 'rgba(111, 138, 120, 0.08)' : 'rgba(111, 138, 120, 0.06)',
-          }}
-        >
-          <Typography variant="body2" color="text.secondary" fontWeight={700} sx={{ mb: 1.2 }}>
-            季相指標
-          </Typography>
-          <Stack spacing={1.25} divider={<Divider flexItem />}>
-            <IndexRow title="開花期指數" index={summary.floweringIndex} active={hasSelection} />
-            <IndexRow title="常綠 / 葉相穩定指數" index={summary.leafIndex} active={hasSelection} />
-          </Stack>
         </Box>
 
         <Box
@@ -340,38 +346,19 @@ function PlantCombinationPanel({
             bgcolor: 'rgba(111, 138, 120, 0.06)',
           }}
         >
-          <Typography variant="body2" color="text.secondary" fontWeight={700}>
-            植栽層次檢查
+          <Typography variant="body2" color="text.secondary" fontWeight={800} sx={{ mb: 1 }}>
+            怎麼理解這組搭配？
           </Typography>
-          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap" sx={{ my: 1 }}>
-            <Chip label={`高層 ${summary.layerSummary.high}`} size="small" color="primary" variant="outlined" />
-            <Chip label={`中層 ${summary.layerSummary.middle}`} size="small" color="primary" variant="outlined" />
-            <Chip label={`低層 ${summary.layerSummary.low}`} size="small" color="primary" variant="outlined" />
-          </Stack>
-          <Typography variant="caption" color="text.secondary">
-            {hasSelection ? summary.layerSummary.reminder : '加入植物後開始檢查高、中、低層配置。'}
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 2,
-            p: 1.6,
-            bgcolor: hasSelection ? 'rgba(111, 138, 120, 0.10)' : 'rgba(111, 138, 120, 0.06)',
-          }}
-        >
-          <Stack direction="row" spacing={1} alignItems="flex-start">
-            <TipsAndUpdatesIcon color="primary" fontSize="small" />
-            <Box>
-              <Typography variant="body2" color="text.secondary" fontWeight={700}>
-                設計提醒
-              </Typography>
-              <Typography variant="caption" color="text.secondary">
-                {hasSelection ? summary.designReminder : '加入植物後，系統會產生一句話設計提醒。'}
-              </Typography>
-            </Box>
+          <Stack spacing={0.7}>
+            <Typography variant="caption" color="text.secondary">
+              1. 先看哪些月份有較明顯的季節亮點。
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              2. 再看非花季時是否仍有穩定的全年綠量。
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              3. 最後看高、中、低層是否完整。
+            </Typography>
           </Stack>
         </Box>
       </Stack>

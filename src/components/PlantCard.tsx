@@ -24,9 +24,9 @@ const seasonalImageForPlant = (plantId: string): string =>
 const placeholderImage = assetPath('images/plants/placeholder.jpg');
 
 const getFlowerImpactLabel = (impact: number): string => {
-  if (impact >= 3) return '強';
-  if (impact >= 2) return '中';
-  if (impact >= 1) return '弱';
+  if (impact >= 3) return '表現明顯';
+  if (impact >= 2) return '基本支撐';
+  if (impact >= 1) return '建議補強';
   return '不顯著';
 };
 
@@ -278,7 +278,7 @@ function PlantCard({ plant, selected, onToggle }: PlantCardProps) {
             {plant.flower_color || '無資料'}
           </Typography>
           <Typography variant="body2" sx={{ lineHeight: 1.55 }}>
-            <Box component="span" sx={{ color: 'text.secondary' }}>花量：</Box>
+            <Box component="span" sx={{ color: 'text.secondary' }}>花色亮點強度：</Box>
             {flowerImpactLabel}
           </Typography>
         </Box>

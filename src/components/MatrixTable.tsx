@@ -23,7 +23,7 @@ function MatrixTable({ plants, type }: MatrixTableProps) {
   return (
     <Card sx={{ p: 3 }}>
       <Typography variant="h6" gutterBottom>
-        {isFlower ? '花期矩陣' : '葉相矩陣'}
+        {isFlower ? '季節亮點矩陣' : '全年綠量矩陣'}
       </Typography>
 
       {plants.length === 0 ? (
@@ -66,7 +66,7 @@ function MatrixTable({ plants, type }: MatrixTableProps) {
                           minWidth: 44,
                           height: 34,
                         }}
-                        aria-label={`${plant.chinese_name} ${month.label} ${value === 1 ? '有' : '無'}${isFlower ? '花期' : '葉相'}`}
+                        aria-label={`${plant.chinese_name} ${month.label} ${value === 1 ? '有' : '無'}${isFlower ? '季節亮點' : '全年綠量'}`}
                       />
                     );
                   })}

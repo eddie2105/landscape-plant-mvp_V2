@@ -140,7 +140,7 @@ function FilterPanel({ filters, options, onFilterChange, onReset }: FilterPanelP
 
         <SelectField
           field="plant_layer"
-          label="植栽層次"
+          label="空間層次"
           value={filters.plant_layer}
           options={options.plant_layer}
           onFilterChange={onFilterChange}

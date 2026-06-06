@@ -79,16 +79,16 @@ const getIndexLevel = (score: number): string => {
 };
 
 const getFloweringNote = (score: number, earnedPoints: number, targetMonthCount: number): string => {
-  if (score >= 80) return `達成 ${earnedPoints} / ${targetMonthCount}，目標花期表現穩定`;
-  if (score >= 60) return `達成 ${earnedPoints} / ${targetMonthCount}，目標花期支撐中高`;
-  if (score >= 40) return `達成 ${earnedPoints} / ${targetMonthCount}，部分月份花量偏弱`;
-  return `達成 ${earnedPoints} / ${targetMonthCount}，目標花期不足`;
+  if (score >= 80) return `達成 ${earnedPoints} / ${targetMonthCount}，想看的花季表現明顯`;
+  if (score >= 60) return `達成 ${earnedPoints} / ${targetMonthCount}，想看的花季有基本支撐`;
+  if (score >= 40) return `達成 ${earnedPoints} / ${targetMonthCount}，部分月份季節亮點偏弱`;
+  return `達成 ${earnedPoints} / ${targetMonthCount}，想看的花季建議補強`;
 };
 
 const getLeafNote = (score: number): string => {
-  if (score >= 80) return '全年葉相穩定';
-  if (score >= 60) return '葉相支撐中高';
-  if (score >= 40) return '部分月份葉相不足';
+  if (score >= 80) return '全年綠量穩定';
+  if (score >= 60) return '全年綠量有基本支撐';
+  if (score >= 40) return '部分月份綠量不足';
   return '全年綠量支撐偏弱';
 };
 
@@ -216,7 +216,7 @@ const getLayerSummary = (selectedPlants: PlantWithMatrix[]): PlantLayerSummary =
       100,
   );
 
-  let reminder = '高、中、低層皆有，植栽層次完整。';
+  let reminder = '高、中、低層皆有，空間層次完整。';
   if (missingLayers.length > 0) {
     const suggestions: string[] = [];
     if (layerSummary.high === 0) suggestions.push('補喬木或小喬木作為上層骨架');
@@ -282,34 +282,34 @@ export const getSeasonalSummary = (
   const reminderParts: string[] = [];
 
   if (selectedCount === 0) {
-    reminderParts.push('請先加入植物，系統會依花期目標、全年葉相穩定度與植栽層次產生提醒。');
+    reminderParts.push('請先加入植物，系統會依想看的花季、全年綠量穩定度與空間層次產生提醒。');
   } else {
     if (floweringMonths.length > 0) {
       reminderParts.push(
-        `目前選擇 ${floweringStrategy.label}，已選組合主要開花月份為 ${monthLabels(
+        `目前選擇 ${floweringStrategy.label}，已選組合主要季節亮點月份為 ${monthLabels(
           floweringMonths,
         )}。`,
       );
     } else {
-      reminderParts.push(`目前選擇 ${floweringStrategy.label}，此組植物尚未形成明顯開花月份。`);
+      reminderParts.push(`目前選擇 ${floweringStrategy.label}，此組植物尚未形成明顯季節亮點月份。`);
     }
 
     if (weakFlowerMonths.length > 0) {
       reminderParts.push(
-        `目標花期內 ${monthLabels(weakFlowerMonths)} 花量不足，可補入對應月份的中高花量植物。`,
+        `想看的花季內 ${monthLabels(weakFlowerMonths)} 季節亮點不足，可補入對應月份的明顯觀花植物。`,
       );
     } else {
-      reminderParts.push('目標花期內每個月份皆有明顯觀花表現。');
+      reminderParts.push('想看的花季內每個月份皆有明顯季節亮點。');
     }
 
     if (leafWarnings.length > 3) {
-      reminderParts.push(`全年有 ${leafWarnings.length} 個月份葉相覆蓋低於 60%，需留意背景綠量斷層。`);
+      reminderParts.push(`全年有 ${leafWarnings.length} 個月份綠量覆蓋低於 60%，需留意背景綠量斷層。`);
     } else if (leafScore >= 80) {
-      reminderParts.push('常綠 / 葉相穩定指數高，可作為穩定背景綠量。');
+      reminderParts.push('全年綠量穩定度高，可作為穩定背景綠量。');
     } else if (leafScore < 60) {
-      reminderParts.push('葉相穩定指數偏低，若作為背景植栽，需補常綠觀葉植物。');
+      reminderParts.push('全年綠量穩定度偏低，若作為背景植栽，需補常綠觀葉植物。');
     } else {
-      reminderParts.push('葉相支撐中等，適合搭配常綠觀葉植物提高穩定度。');
+      reminderParts.push('全年綠量有基本支撐，可搭配常綠觀葉植物提高穩定度。');
     }
 
     if (layerSummary.score < 80) {

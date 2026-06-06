@@ -33,9 +33,9 @@ function ChartCard({
 }
 
 const getStateLabel = (point: number): string => {
-  if (point >= 1) return '強';
-  if (point >= 0.5) return '中';
-  return '弱';
+  if (point >= 1) return '表現明顯';
+  if (point >= 0.5) return '基本支撐';
+  return '建議補強';
 };
 
 const getStateColor = (point: number, type: 'flower' | 'leaf'): string => {
@@ -50,7 +50,7 @@ function MonthCell({ item, type }: { item: AnnualSeasonalPoint; type: 'flower' |
   return (
     <Box
       sx={{
-        minWidth: 58,
+        minWidth: 78,
         borderRadius: 2,
         p: 1,
         textAlign: 'center',
@@ -152,7 +152,7 @@ function AnalysisCharts({ selectedPlants, analysis, summary }: AnalysisChartsPro
           季相檢查
         </Typography>
         <Typography color="text.secondary">
-          請先加入植物，系統會依花量權重、葉相穩定度與植栽層次產生檢查表。
+          請先加入植物，系統會依季節亮點、全年綠量穩定度與空間層次產生檢查表。
         </Typography>
       </Card>
     );
@@ -171,24 +171,24 @@ function AnalysisCharts({ selectedPlants, analysis, summary }: AnalysisChartsPro
   return (
     <Stack spacing={2.5}>
       <ChartCard
-        title="年度季相檢查"
-        subtitle="用月份狀態格檢查全年開花與葉相；弱的月份就是需要回頭看的缺口。"
+        title="年度搭配檢查"
+        subtitle="用月份狀態格檢查季節亮點與全年綠量；建議補強的月份就是後續可討論的缺口。"
       >
         <Stack spacing={1.5}>
-          <MonthStateRow label="開花" items={chartData.annual} type="flower" />
-          <MonthStateRow label="葉相" items={chartData.annual} type="leaf" />
+          <MonthStateRow label="季節亮點" items={chartData.annual} type="flower" />
+          <MonthStateRow label="全年綠量" items={chartData.annual} type="leaf" />
         </Stack>
       </ChartCard>
 
       <ChartCard
-        title={`花期策略檢查｜${summary.floweringStrategy.label}`}
-        subtitle={`${chartData.strategy.length} 個目標月份中，${supportedFlowerMonths} 個月份達中等以上，${weakFlowerMonths} 個月份偏弱。`}
+        title={`想看的花季｜${summary.floweringStrategy.label}`}
+        subtitle={`${chartData.strategy.length} 個想看的月份中，${supportedFlowerMonths} 個月份達基本支撐以上，${weakFlowerMonths} 個月份建議補強。`}
       >
-        <MonthStateRow label="目標花期" items={chartData.strategy} type="flower" />
+        <MonthStateRow label="想看的花季" items={chartData.strategy} type="flower" />
       </ChartCard>
 
       <ChartCard
-        title="植栽層次檢查"
+        title="空間層次完整度"
         subtitle="高、中、低層分開看，避免某一層很多植物掩蓋另一層缺失。"
       >
         <Stack spacing={1.5}>

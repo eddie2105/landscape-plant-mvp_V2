@@ -117,7 +117,7 @@ describe('getSeasonalSummary', () => {
 
     expect(summary.leafIndex.score).toBe(21);
     expect(summary.leafWarnings).toEqual(['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']);
-    expect(summary.designReminder).toContain('全年有 9 個月份葉相覆蓋低於 60%');
+    expect(summary.designReminder).toContain('全年有 9 個月份綠量覆蓋低於 60%');
   });
 
   it('scores layer completeness independently from leaf stability', () => {

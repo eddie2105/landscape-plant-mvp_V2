@@ -88,21 +88,21 @@ describe('getMonthlyDetailData', () => {
       flowerState: '強',
       leafCoverageLabel: '3 / 3 種，100%',
       leafState: '強',
-      reason: '目標花期內，開花強；葉相穩定',
+      reason: '想看的花季內，季節亮點表現明顯；全年綠量穩定',
     });
     expect(data.find((item) => item.month === 'apr')).toMatchObject({
       flowerSources: ['薄荷(1)'],
       flowerState: '中',
       leafCoverageLabel: '2 / 3 種，67%',
       leafState: '中',
-      reason: '目標花期內，開花中；葉相中等',
+      reason: '想看的花季內，季節亮點基本支撐；全年綠量基本支撐',
     });
     expect(data.find((item) => item.month === 'may')).toMatchObject({
       flowerSources: [],
       flowerState: '弱',
       leafState: '弱',
-      reason: '目標花期內缺花，需補強；葉相偏弱',
+      reason: '想看的花季內缺少季節亮點，建議補強；全年綠量建議補強',
     });
-    expect(data.find((item) => item.month === 'jan')?.reason).toBe('非目標花期；葉相偏弱');
+    expect(data.find((item) => item.month === 'jan')?.reason).toBe('非想看的花季；全年綠量建議補強');
   });
 });
